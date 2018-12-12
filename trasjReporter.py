@@ -41,8 +41,8 @@ app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=465,
     MAIL_USE_SSL=True,
-    MAIL_USERNAME = 'compruebaGaspar@gmail.com',
-    MAIL_PASSWORD = 'gasparProject',
+    MAIL_USERNAME = 'xxxxxxxxxx',
+    MAIL_PASSWORD = 'xxxxx',
     MAIL_DEFAULT_SENDER ='SECURITY_EMAIL_SENDER'
     )
 
