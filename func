@@ -1,0 +1,107 @@
+﻿select geom from d.point;
+
+select * from building where type = 'train_station' and name like 'Bah%';
+
+SELECT *
+FROM building, d.point 
+WHERE  d.point.gid=3 and ST_DWithin(building.geom, d.point.geom, 5000) 
+ORDER BY ST_Distance(building.geom, d.point.geom) LIMIT 1;
+
+WITH parcelcandidates AS (
+  SELECT h.gid AS p_id, p.gid AS h_id 
+  FROM building h JOIN d.point p 
+  ON ST_DWithin(p.geom, h.geom, 40)
+  ORDER BY h.gid , ST_Distance(p.geom, h.geom)
+)
+SELECT DISTINCT ON (p_id) p_id, h_id 
+FROM parcelcandidates;
+
+
+SELECT distinct(g1.geom), g1.name,ST_Distance(g1.geom,g2.geom), g1.type
+    FROM building  As g1, d.point As g2   
+ WHERE  ST_DWithin(g1.geom, g2.geom, 30);
+
+
+
+
+SELECT distinct(g1.geom), g1.name,ST_Distance(g1.geom,g2.geom), g1.type
+    FROM building  As g1, d.point As g2   
+WHERE  g1.gid <> g2.gid  
+ORDER BY ST_Distance(g1.geom,g2.geom);
+
+SELECT *, g1.name
+    FROM building  As g1, d.point As g2   
+WHERE g1.gid = 3 and g1.gid <> g2.gid  
+ORDER BY ST_Distance(g1.geom,g2.geom) 
+LIMIT 1
+
+
+SELECT m.geom, m.nn_precincts[1] As nn_precinct1
+		FROM 
+		(SELECT b.geom ,
+			ARRAY(SELECT p.geom
+					FROM d.point p
+		WHERE ST_DWithin(b.geom, p.geom, 10) 
+		ORDER BY ST_Distance(b.geom, p.geom) 
+		LIMIT 3) As nn_precincts 
+FROM building b  ) m
+ORDER BY m.geom;
+
+
+CREATE OR REPLACE FUNCTION fibonacci (n INTEGER) 
+ returns setof holder as $$
+DECLARE
+   counter INTEGER := 1 ; 
+	r holder%rowtype;
+
+BEGIN
+ 
+ IF (n < 1) THEN
+ RETURN 0 ;
+ END IF; 
+ 
+ LOOP 
+ EXIT WHEN counter = n ; 
+ counter := counter + 1 ; 
+ for r in  SELECT g1.geom, g1.name, g1.type
+    FROM building  As g1, d.point As g2   
+	WHERE g1.gid = counter and g1.gid <> g2.gid  
+		ORDER BY ST_Distance(g1.geom,g2.geom)  loop
+return next r;
+
+LIMIT 1;
+ END LOOP ; 
+ 
+ RETURN;
+END ; 
+$$ LANGUAGE plpgsql;
+
+ select fibonacci(3);
+
+create type holder as (geom geometry, name varchar, type varchar);
+
+ create function SqlDepartmentSalaries() returns setof holder as
+
+'
+SELECT g1.geom, g1.name, g1.type
+    FROM building  As g1, d.point As g2   
+	WHERE g1.gid = c and g1.gid <> g2.gid  
+		ORDER BY ST_Distance(g1.geom,g2.geom)
+'
+language 'sql';
+create or replace function PLpgSQLDepartmentSalaries() returns setof holder as
+'
+declare
+r holder%rowtype;
+begin
+for r in SELECT g1.geom, g1.name, g1.type
+    FROM building  As g1, d.point As g2   
+	WHERE g1.gid = counter and g1.gid <> g2.gid  
+		ORDER BY ST_Distance(g1.geom,g2.geom) loop
+return next r;
+end loop;
+return;
+end
+'
+language 'plpgsql';
+
