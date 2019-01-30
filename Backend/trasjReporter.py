@@ -50,7 +50,7 @@ app.config.update(
 MAIL_SERVER='smtp.gmail.com',
 MAIL_PORT=587,
 MAIL_USE_TLS=True,
-MAIL_USERNAME = 'xxxxxxxx@sss',
+MAIL_USERNAME = 'xxxxxxxx@xxxx',
 MAIL_PASSWORD = 'xxxxxxx'
 app.config['SECURITY_EMAIL_SENDER'] = 'xxxxxxxx@sss'
 mail = Mail(app)
