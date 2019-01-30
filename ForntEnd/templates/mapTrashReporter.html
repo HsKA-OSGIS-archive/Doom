@@ -1,0 +1,112 @@
+{% extends 'layoutTrashReporter.html' %}
+
+{% block body %}
+<!DOCTYPE html>
+<html>
+  <head>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4-src.js" integrity="sha256-3C7q5+R4Ff0+vWiHFv31qL69a6qtT+Pjw/V+tsk1lWo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4.js" integrity="sha256-KJI74PS1qv3+hue+yyIWK/l8TxvS9u4WX7QDrtHkHOo=" crossorigin="anonymous"></script>   
+    
+  </head>
+  <body>
+      <script type="text/javascript" src="/static/locate.js"></script>
+      
+	  <div style="margin-top: 1%; margin-bottom: 1%" class:"container-fluid">
+	     <a href="/addPoint" class="btn btn-primary btn-lg">Report Trash</a>
+	     <a href="/removePoint" class="btn btn-primary btn-lg">Report Clearing</a>
+	     <input id="track" type="checkbox" unchecked data-toggle="toggle" style="float: right">
+	  </div>            
+	  
+	    <div id="mapid" style="width: 100%; height: 60em;"></div>
+	    
+	    <script type="text/javascript" src="/static/map.js"></script>
+
+	    <script >
+	    $.ajax({
+	        type: 'GET',
+	        url: "{{ url_for('interactive2') }}",
+	        data:  "{{ data }}", // serializes the form's elements.
+	        success: function (data) {
+	        
+		    for (var i = 0; i<data.length; i++){
+		            console.log(data[i]);
+		
+		            trashPoints = JSON.parse(JSON.stringify(data[i]));
+		
+		            var utm = "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs"
+		            var geo = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+		
+		            var x = trashPoints['geometry']['coordinates'][0];
+		     
+		            var y = trashPoints['geometry']['coordinates'][1];
+		
+		
+		            var popupText = trashPoints['properties']["road"];
+		            var lat = x;
+		            var lon = y;
+		
+		            var markerLocation = new L.LatLng(lat, lon);
+		            trashPointsMarker = new L.Marker(markerLocation);
+		            
+		            map.addLayer(trashPointsMarker);
+		            trashPointsMarker.bindPopup(popupText);  
+		                           }       
+		
+		
+		        }});
+	    
+	    var current_position, current_accuracy;	    
+	    var toggleon = "false";
+	    
+	    function onLocationFound(e) {
+	      // if position defined, then remove the existing position marker and accuracy circle from the map
+	      if (current_position) {
+	          map.removeLayer(current_position);
+	          map.removeLayer(current_accuracy);
+	      }
+
+	      var radius = e.accuracy / 2;
+
+	      current_position = L.marker(e.latlng).addTo(map)
+	        .bindPopup("You are within " + radius + " meters from this point").openPopup();
+
+	      current_accuracy = L.circle(e.latlng, radius).addTo(map);
+	    }
+
+	    function onLocationError(e) {
+	      alert(e.message);
+	    }
+
+	    map.on('locationfound', onLocationFound);
+	    map.on('locationerror', onLocationError);
+
+	    // wrap map.locate in a function    
+	    function locate() {
+	    	if ( toggleon == "true") {
+	    		console.log("user is currently getting tracked")
+	    		map.locate({setView: true, maxZoom: 16});
+	    	} else if ( toggleon == "false") {
+	    		console.log("user is not getting tracked anymore")
+	    		current_position.closePopup();
+	    		map.removeLayer(current_accuracy)
+	    	}	        
+	    }
+
+	    setInterval(locate, 2000);
+	    
+	    $('#track').change(function() {
+	    	  if (toggleon == "false") {
+	    		  toggleon = "true"
+	    		  console.log("on")
+	    	  } 
+	    	  else if (toggleon = "true") {	    		  
+	    		  toggleon = "false"
+	    		  console.log("off")
+	    	  }
+	    })
+		</script>   
+    
+  </body>
+</html>
+
+{% endblock %}

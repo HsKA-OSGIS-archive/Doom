@@ -1,0 +1,125 @@
+{% extends 'layoutTrashReporter.html' %}
+
+{% block body %}
+
+
+
+
+<script>
+
+ $(function() {
+              $('a#process_input').bind('click', function() {
+                $.getJSON('/background_process', function(data) {
+                     var text = $('#result2');
+                     text.val(ladLong[0]); 
+                     var text = $('#result3');
+                     text.val(ladLong[1]); 
+                });
+                return false;
+              });
+            });
+ 
+var ladLong = [];
+
+function getLocation() {
+   var options = {
+           enableHighAccuracy: true,
+           timeout: 6000
+   }
+   if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(showPosition, locationError, options);
+   }  else {
+     alert("Geolocation API is not supported in your browser.");
+   }}
+
+function showPosition(position) {
+  ladLong.push(position.coords.latitude, position.coords.longitude);
+}
+   
+
+function locationError(error){
+   switch (error.code) {
+       case error.PERMISSION_DENIED:
+           alert("Denied request for Geolocation.");
+           break;
+       case error.POSITION_UNAVAILABLE:
+           alert("Geolocation unavailable.");
+           break;
+       case error.TIMEOUT:
+           alert("Geolocation request timed out.");
+           break;
+       case error.UNKNOWN_ERROR:
+           alert("Unknown Geolocation error.");
+           break;
+   }       
+}
+
+       $.ajax({
+           type: "POST",
+           url: "{{ url_for('upload_file') }}",
+           data:  ladLong, // serializes the form's elements.
+           success: function (data) {
+               console.log(ladLong);  // display the returned data in the console.
+           }});
+       
+</script>
+<div id=map style="width: 100%; height: 25em"> </div>
+
+  <h1>Report Trash</h1>
+  {% from "includes/_formhelpers.html" import render_field %}
+  
+ 
+  
+    <form  action="" method="post" name="simple" enctype="multipart/form-data" id='point'>
+        
+     
+	   <a href=# id=process_input ><button class="btn btn-success" style="margin-bottom: 3%">Autofill Location</button></a>
+
+        
+    <div class="form-group">
+    {{render_field(form.lat, id="result2",class_="form-control")}}
+    </div>
+
+    <div class="form-group">
+      {{render_field(form.lon, id="result3", class_="form-control")}}
+    </div>
+    
+    
+    <div class="form-group">
+        <input type=file name=file>
+    </div>
+    
+ <div class="form-horizontal">
+    <h1>Choose Trash Type:</h1>
+   <div id="radios1" class="btn-group view-opt-btn-group" data-toggle="buttons-radio">
+   
+     <p><h4>{{ form.trashType}}</h4></p>
+
+</div>
+    </div>
+    <p><input type="submit" class="btn btn-primary" value="Submit"></p>
+  </form>
+  <script>
+  var map = L.map('map').setView([49.007432, 8.409183], 12);
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+          '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+          'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox.streets'
+  }).addTo(map);
+  
+  var stuSplit = L.latLng(49.007432, 8.409183);
+  var myMarker = L.marker(stuSplit, 
+      { title: 'Drag to Supermarket', draggable: true })
+          .addTo(map);
+  myMarker.bindPopup("Drag to Supermarket").openPopup();
+  
+  myMarker.on('dragend', function (event) {
+      $('#result2').val(myMarker.getLatLng().lat); 
+      $('#result3').val(myMarker.getLatLng().lng); 
+      IsDragging = false;
+    });
+
+  </script>
+{% endblock %}

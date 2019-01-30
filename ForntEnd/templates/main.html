@@ -1,0 +1,20 @@
+{% extends 'layoutTrashReporter.html' %}
+
+{% block body %}
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        
+  <div class="jumbotron text-center">
+    <h1><b>TrashReporter</b> Karlsruhe</h1>
+    <p class="lead">This application is part of the course <b>OpenSource GIS</b><br><small>Yair Preiss, Shaiful Islam, Oliver Hennhoefer, Kristof Gyori, Md Raqibul Islam</small></p>
+    {% if session.logged_in == NULL %}
+      <a href="/register" class="btn btn-primary btn-lg">Register</a>
+      <a href="/login" class="btn btn-success btn-lg">Login</a>
+    {% endif %}
+    
+    
+    
+  </div>
+  
+ 
+{% endblock %}
