@@ -42,17 +42,17 @@ app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=465,
     MAIL_USE_SSL=True,
-    MAIL_USERNAME = 'compruebaGaspar@gmail.com',
-    MAIL_PASSWORD = 'gasparProject',
+    MAIL_USERNAME = 'xxxxxx@xxxxx',
+    MAIL_PASSWORD = 'xxxxxxxxx',
     MAIL_DEFAULT_SENDER ='SECURITY_EMAIL_SENDER'
     )
 
 MAIL_SERVER='smtp.gmail.com',
 MAIL_PORT=587,
 MAIL_USE_TLS=True,
-MAIL_USERNAME = 'compruebaGaspar@gmail.com',
-MAIL_PASSWORD = 'gasparProject'
-app.config['SECURITY_EMAIL_SENDER'] = 'compruebaGaspar@gmail.com'
+MAIL_USERNAME = 'xxxxxx@xxxxxx',
+MAIL_PASSWORD = 'xxxxxx'
+app.config['SECURITY_EMAIL_SENDER'] = 'xxxxxxx@xxxxx'
 mail = Mail(app)
 
 UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'uploads')
