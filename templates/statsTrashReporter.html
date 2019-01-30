@@ -2,6 +2,9 @@
 
 {% block body %}
 
+<div id="canvas-holder1" class="container-fluid" style="width:100%; height: 1000px; float:left;"><canvas id="chart-area1"></canvas></div>
+<div id="canvas-holder1" class="container-fluid" style="width:100%; height: 1000px; float:left;"><canvas id="chart-area2"></canvas></div>
+
 <script> 
 $.ajax({
     type: 'GET',
@@ -9,11 +12,128 @@ $.ajax({
     url: "{{ url_for('stats') }}",
     data:  "{{ data }}", // serializes the form's elements.
     success: function (data) {
-        alert(JSON.stringify(data));
-        // take points and put in a list
-        // make new layers ub keafket
+        console.log(data);
+    	
+    	var tt_bio_label = data.data[0].lista2[0]
+    	var tt_bio = data.data[0].lista2[1]
+    	var tt_paper_label = data.data[0].lista2[2]
+    	var tt_paper = data.data[0].lista2[3]
+    	var tt_mixed_label = data.data[0].lista2[4]
+    	var tt_mixed = data.data[0].lista2[5]
+    	var tt_glass_label = data.data[0].lista2[6]
+    	var tt_glass = data.data[0].lista2[7]
+    	var tt_others_label = data.data[0].lista2[8]
+    	var tt_others = data.data[0].lista2[9]
+    	var tt_resi_label =data.data[0].lista2[10]
+    	var tt_resi =data.data[0].lista2[11]
+    	var tt_recy_label =data.data[0].lista2[12]
+    	var tt_recy =	data.data[0].lista2[13]
+
+    	trashtypeGraph(tt_bio_label, tt_bio, tt_paper_label, tt_paper, tt_mixed_label, tt_mixed, tt_glass_label, tt_glass, tt_others_label, tt_others,
+    			tt_resi_label, tt_resi, tt_recy_label, tt_recy);
+    	
+        
     
     }});
+    
+function trashtypeGraph (bio_label, bio_data, tt_paper_label, tt_paper, tt_mixed_label, tt_mixed,tt_glass_label, tt_glass, 
+		tt_others_label, tt_others, tt_resi_label, tt_resi, tt_recy_label, tt_recy) {
+
+	var config = {
+	    type: 'doughnut',
+	    data: {
+	        datasets: [{
+	            data: [
+	                bio_data,
+	                tt_paper,
+	                tt_mixed,
+	                tt_glass,
+	                tt_others,
+	                tt_resi,
+	                tt_recy
+	            ],
+	            backgroundColor: [
+	                window.chartColors.red,
+	                window.chartColors.orange,
+	                window.chartColors.yellow,
+	                window.chartColors.green,
+	                window.chartColors.blue,
+	                window.chartColors.orange,
+	                window.chartColors.yellow
+	            ],
+	            label: 'Dataset 1'
+	        }],
+	        labels: [
+	            bio_label,
+	            tt_paper_label,
+	            tt_mixed_label,
+	            tt_glass_label,
+	            tt_others_label,
+	            tt_resi_label,
+	            tt_recy_label
+	            
+	        ]
+	    },
+	    options: {
+	        responsive: true,
+	        legend: {
+	            position: 'top',
+	        },
+	        title: {
+	            display: true,
+	            text: 'Reported sites by trashtype:'
+	        },
+	        animation: {
+	            animateScale: true,
+	            animateRotate: true
+	        }
+	    }
+	};
+
+
+	var ctx = document.getElementById('chart-area1').getContext('2d');
+	window.myDoughnut = new Chart(ctx, config);
+
+
+	var colorNames = Object.keys(window.chartColors);
+	console.log("setup finished")
+}
+
+function setupProductsChart(prod_other, prod_meat, vegebables, prod_personalcare, cleaners,
+        bakings, frozenfood, canned, fruits, papergoods, dairy, bakinggoods,beverages) {
+    new Chart(document.getElementById("chart-area3"), {
+        type: 'bar',
+        data: {
+          labels: ["Other", "Meat", "Vegetables", "Personal Care", "Cleaners",
+                   "Bread/Bakery", "Froyen Foods", "Canned/Jarred Goods",
+                   "Fruits", "Paper Goods", "Dairy", "Dry/Baking Goods", "Beverages"],
+          datasets: [
+            {
+              label: "Votes",
+              backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2"],
+              data: [prod_other, prod_meat, vegetables, prod_personalcare, cleaners,
+                     bakings, frozenfood, canned, fruits, papergoods, dairy, bakinggoods,beverages]
+            }
+          ]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'What products our users search for with our Application'
+          },
+          scales: {
+              yAxes: [{
+                  display: true,
+                  ticks: {
+                      suggestedMin: 650,    // minimum will be 0, unless there is a lower value.
+                  }
+              }]
+          }
+          
+        }
+    });
+    
 </script>
 
 {% endblock %}

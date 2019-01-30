@@ -4,26 +4,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Bing Maps</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script><script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4-src.js" integrity="sha256-3C7q5+R4Ff0+vWiHFv31qL69a6qtT+Pjw/V+tsk1lWo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4.js" integrity="sha256-KJI74PS1qv3+hue+yyIWK/l8TxvS9u4WX7QDrtHkHOo=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
   </head>
   <body>
-     <a href="/addPoint" class="btn btn-primary btn-lg">Add Point</a>
-     <a href="/removePoint" class="btn btn-danger btn-lg">Remove Point</a>
+     <a href="/addPoint" class="btn btn-primary btn-lg" style="margin-bottom: 1%">Report Trash</a>
+     <a href="/removePoint" class="btn btn-primary btn-lg" style="margin-bottom: 1%">Refresh Page</a>
      
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="//cdn.datatables.net/1.10.6/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
         <link href="//cdn.datatables.net/tabletools/2.2.4/css/dataTables.tableTools.css" rel="stylesheet" type="text/css" />
-        <link href="/Editor-1.4.2/css/dataTables.editor.css" rel="stylesheet" type="text/css" />
-        <link href="../css/selectize.css" rel="stylesheet" type="text/css"/>
+
         <!-- SCRIPTS !-->
 
 
@@ -109,7 +104,7 @@ $(document).ready(function() {
         
     </script>   
 
-<div id="mapid" style="width: 1500px; height: 800px;"></div>
+<div id="mapid" style="width: 100%; height: 45em;"></div>
 
 <script>      
 
@@ -124,8 +119,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 }).addTo(map);
 var fountainsMarker;
 
-var points = [];
-var example;
+
 function ajaxCallPoints(){
 	$.ajax({
 
@@ -140,7 +134,7 @@ for (var i = 0; i<data.length; i++){
                    var fountains = JSON.parse(JSON.stringify(data[i]));
                    var x = fountains['geometry']['coordinates'][0];
                    var y = fountains['geometry']['coordinates'][1];
-                   var popupText = fountains['properties']["name"];
+                   var popupText = fountains['properties']["road"];
                    var markerLocation = new L.LatLng(x, y);
                    fountainsMarker = new L.Marker(markerLocation);
                    map.addLayer(fountainsMarker);
@@ -159,33 +153,7 @@ function deleteMarker() {
     }
     } 
 </script>
-
-
-
-
-
-
-
-
-
-
-     
-     <div id="map" class="map"></div>
-     <select id="layer-select">
-       <option value="OSM">OSM</option>
-     </select>
-    <script>
-    
-   
-    
-      var styles = [
-
-        'OSM',
-      ];
-      var layers = [];
-     
-    </script>
-    
+         
   </body>
 </html>
 
