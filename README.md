@@ -8,8 +8,6 @@ Install pgAdminIII or pgAdmin4 from the pgAdmin website. This step is not necess
 Create a database, either in pgAdmin or manually from the command line.
 Set up the required extensions by executing the following queries on this new database:
 CREATE EXTENSION postgis
- 
-If the extension creation for pgrouting fails, you may need to install the extension on your computer first, so that PostgreSQL can extend a database with it. See the pgrouting website for more information.
 
 # Libraries used
 **OS_path-** This module implements some useful functions on pathnames. To read or write files see open(), and for accessing the filesystem see the os module. The path parameters can be passed as either strings, or bytes. 
